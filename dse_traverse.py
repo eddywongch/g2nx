@@ -109,10 +109,12 @@ class DseLoader:
         return result
 
     ####################################
-    # Convert Gremlin edges to Nx edges
+    # Convert Gremlin graph to Nx graph
     # returns a Networkx graph
-    def convertG2NxEdges(g):
-        import networkx as nx
+    ####################################
+    import networkx as nx
+
+    def convertG2Nx(g):
         GG = nx.Graph()
         
         # Edges
@@ -125,13 +127,17 @@ class DseLoader:
             #for p in g.E(e).properties():
             #    print("key:",e.label, "| value: " ,e.value)
 
+            # TODO: Load edge properties
+
         # Vertices
         verts = g.V()
         for v in verts:
-            print("*** Verts", v.id , DseLoader.parseVertexId(v.id))
+            vp = DseLoader.parseVertexId(v.id)
+            print("*** Verts", v.id , vp)
+            id = vp['vertex_id']
             for p in g.V(v).properties():
                 print("key:",p.label, "| value: " ,p.value)
-                #G.nodes['Chet Kapoor']['title']='CEO'
+                GG.nodes[id][p.label] = p.value
 
         return GG
 
@@ -144,7 +150,9 @@ if __name__ == '__main__':
 
 
     g = dl.traverse()
-    gg = DseLoader.convertG2NxEdges(g)
+    gg = DseLoader.convertG2Nx(g)
+
+    print('End: ', gg.nodes['bf720fd3069c1704fd25359e1ebb77e531c4949a'])
 
     ##print( list(gg.adjacency()) )
     
